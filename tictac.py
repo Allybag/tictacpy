@@ -1,6 +1,6 @@
 import tkinter as tk
 
-# notation is a list containing all moves made
+# notation is a list of moves played
 notation = []
 
 # This class defines a Square, just a clickable canvas which shows a nought or cross when clicked
@@ -22,8 +22,8 @@ class Square(tk.Canvas):
 			self.create_line(30, 170, 170, 30)
 			self.free = False
 			global notation
-			notation.append(self.name)
-			print(notation)
+			notation.append(self)
+			print([m.name for m in notation])
 
 	def tac(self, event):
 		""""This will draw a nought on the selected Square."""
@@ -31,8 +31,16 @@ class Square(tk.Canvas):
 			self.create_oval(30, 30, 170, 170)
 			self.free = False
 			global notation
-			notation.append(self.name)
-			print(notation)
+			notation.append(self)
+			print([m.name for m in notation])
+
+	def clear(self):
+		""""This will clear the selected Square."""
+		if not self.free:
+			self.delete("all")
+			self.free = True
+			global notation
+			print([m.name for m in notation])
 
 root = tk.Tk()
 root.title("Tic Tac Toe")
@@ -63,5 +71,13 @@ S.grid(row=2, column=1)
 
 SE = Square("SE", master=root, width=200, height=200)
 SE.grid(row=2, column=2)
+
+# Creating File Menu
+menu = tk.Menu(root)
+root.config(menu=menu)
+
+fileMenu = tk.Menu(menu)
+menu.add_cascade(label="File", menu=fileMenu)
+fileMenu.add_command(label="Undo", command=lambda: notation.pop().clear())
 
 root.mainloop()
