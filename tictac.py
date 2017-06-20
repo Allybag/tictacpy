@@ -8,16 +8,21 @@ class Square(tk.Canvas):
 		self.bind("<Button-2>", self.tac)
 		self.config(highlightbackground="Black")
 		self.config(highlightthickness=1)
+		self.free=True
 	
 
 	def tic(self, event):
 		""""This will draw a cross on the selected Square."""
-		self.create_line(30, 30, 170, 170)
-		self.create_line(30, 170, 170, 30)
+		if self.free:
+			self.create_line(30, 30, 170, 170)
+			self.create_line(30, 170, 170, 30)
+			self.free = False
 
 	def tac(self, event):
 		""""This will draw a nought on the selected Square."""
-		self.create_oval(30, 30, 170, 170)
+		if self.free:
+			self.create_oval(30, 30, 170, 170)
+			self.free = False
 
 root = tk.Tk()
 root.title("Tic Tac Toe")
