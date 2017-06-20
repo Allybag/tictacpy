@@ -45,32 +45,10 @@ class Square(tk.Canvas):
 root = tk.Tk()
 root.title("Tic Tac Toe")
 
-NW = Square("NW", master=root, width=200, height=200)
-NW.grid(row=0, column=0)
-
-N = Square("N", master=root, width=200, height=200)
-N.grid(row=0, column=1)
-
-NE = Square("NE", master=root, width=200, height=200)
-NE.grid(row=0, column=2)
-
-W = Square("W", master=root, width=200, height=200)
-W.grid(row=1, column=0)
-
-C = Square("C", master=root, width=200, height=200)
-C.grid(row=1, column=1)
-
-E = Square("E", master=root, width=200, height=200)
-E.grid(row=1, column=2)
-
-SW = Square("SW", master=root, width=200, height=200)
-SW.grid(row=2, column=0)
-
-S = Square("S", master=root, width=200, height=200)
-S.grid(row=2, column=1)
-
-SE = Square("SE", master=root, width=200, height=200)
-SE.grid(row=2, column=2)
+for i, name in enumerate('NW N NE W C E SW S SE'.split()):
+    s = Square(name, master=root, width=200, height=200)
+    row, column = divmod(i, 3)
+    s.grid(row=row, column=column)
 
 # Creating File Menu
 menu = tk.Menu(root)
