@@ -1,5 +1,6 @@
 import tkinter as tk
 
+# This class defines a Square, just a clickable canvas which shows a nought or cross when clicked
 class Square(tk.Canvas):
 	def __init__(self, master=None, width=None, height=None):
 		super().__init__(master, width=width, height=height)
@@ -17,6 +18,7 @@ class Square(tk.Canvas):
 		self.create_oval(30, 30, 170, 170)
 
 root = tk.Tk()
+root.title("Tic Tac Toe")
 
 NW = Square(master=root, width=200, height=200)
 NW.grid(row=0, column=0)
