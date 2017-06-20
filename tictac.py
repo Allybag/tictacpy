@@ -6,6 +6,8 @@ class Square(tk.Canvas):
 		super().__init__(master, width=width, height=height)
 		self.bind("<Button-1>", self.tic)
 		self.bind("<Button-2>", self.tac)
+		self.config(highlightbackground="Black")
+		self.config(highlightthickness=1)
 	
 
 	def tic(self, event):
