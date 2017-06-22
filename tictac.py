@@ -3,8 +3,8 @@ import tkinter as tk
 # notation is a list of moves played
 notation = []
 
-# This class defines a Square, just a clickable canvas which shows a nought or cross when clicked
 class Square(tk.Canvas):
+	"""A Square is a canvas on which nought or cross can be played"""
 
 	# Cross starts
 	crossToPlay = True
@@ -51,10 +51,13 @@ class Square(tk.Canvas):
 root = tk.Tk()
 root.title("Tic Tac Toe")
 
-for i, name in enumerate('NW N NE W C E SW S SE'.split()):
-    s = Square(name, master=root, width=200, height=200)
-    row, column = divmod(i, 3)
-    s.grid(row=row, column=column)
+# Creating the board
+n = 4
+squares = [(rank, file) for rank in range(1, n + 1) for file in range(1, n + 1)]
+
+for (rank, file) in squares:
+	square = Square((rank, file), master=root, width=200, height=200)
+	square.grid(row=rank, column=file)
 
 # Creating File Menu
 menu = tk.Menu(root)
