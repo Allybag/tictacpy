@@ -9,22 +9,26 @@ class Square(tk.Canvas):
 	# Cross starts
 	crossToPlay = True
 
-	def __init__(self, name, master=None, width=None, height=None):
-		super().__init__(master, width=width, height=height)
+	def __init__(self, name, master=None, size=None):
+		super().__init__(master, width=size, height=size)
 		self.bind("<Button-1>", self.tic)
 		self.config(highlightbackground="Black")
 		self.config(highlightthickness=1)
 		self.free = True
 		self.name = name
+		self.topLeft = size * 0.15
+		self.bottomRight = size * 0.85
 
 	def draw(self):
 		"""This will draw a nought or cross on itself,
 		depending on who is to play."""
+		tl = self.topLeft
+		br = self.bottomRight
 		if Square.crossToPlay:
-			self.create_line(30, 30, 170, 170)
-			self.create_line(30, 170, 170, 30)
+			self.create_line(tl, tl, br, br)
+			self.create_line(tl, br, br, tl)
 		else:
-			self.create_oval(30, 30, 170, 170)
+			self.create_oval(tl, tl, br, br)
 			self.free = False
 
 	def tic(self, event):
@@ -51,12 +55,13 @@ class Square(tk.Canvas):
 root = tk.Tk()
 root.title("Tic Tac Toe")
 
-# Creating the board
-n = 4
+# Creating the board, 600 x 600 pixels, n squares across
+n = 3
+size = 600 // n
 squares = [(rank, file) for rank in range(1, n + 1) for file in range(1, n + 1)]
 
 for (rank, file) in squares:
-	square = Square((rank, file), master=root, width=200, height=200)
+	square = Square((rank, file), master=root, size=size)
 	square.grid(row=rank, column=file)
 
 # Creating File Menu
