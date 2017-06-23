@@ -64,6 +64,19 @@ for (rank, file) in squares:
 	square = Square((rank, file), master=root, size=size)
 	square.grid(row=rank, column=file)
 
+	# Work out which square is opposite the current square
+	square.targets=[]
+	if rank in (1, n):
+		square.targets.append(((n + 1 - rank), file))
+	if file in (1, n):
+		square.targets.append((rank, (n + 1 -file)))
+	if rank in (1, n) and file in (1, n):
+		square.targets.append(((n + 1 - rank), (n + 1 -file)))
+
+# Checking for a win
+
+
+
 # Creating File Menu
 menu = tk.Menu(root)
 root.config(menu=menu)
