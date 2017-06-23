@@ -14,7 +14,7 @@ class Square(tk.Canvas):
 		self.bind("<Button-1>", self.tic)
 		self.config(highlightbackground="Black")
 		self.config(highlightthickness=1)
-		self.free = True
+		self.symbol = None
 		self.name = name
 		self.topLeft = size * 0.15
 		self.bottomRight = size * 0.85
@@ -27,27 +27,28 @@ class Square(tk.Canvas):
 		if Square.crossToPlay:
 			self.create_line(tl, tl, br, br)
 			self.create_line(tl, br, br, tl)
+			self.symbol = 'X'
 		else:
 			self.create_oval(tl, tl, br, br)
-			self.free = False
+			self.symbol = 'O'
 
 	def tic(self, event):
 		""""This draws the relevant move, marks the square as played,
 		sets the next symbol to play, and records the move order."""
-		if self.free:
+		if not self.symbol:
 			self.draw()
-			self.free = False
 			Square.crossToPlay = not Square.crossToPlay
 			global notation
 			notation.append(self)
 			print([m.name for m in notation])
+			print(self.symbol)
 
 
 	def clear(self):
 		""""This will clear the selected Square."""
-		if not self.free:
+		if self.symbol:
 			self.delete("all")
-			self.free = True
+			self.symbol = None
 			Square.crossToPlay = not Square.crossToPlay
 			global notation
 			print([m.name for m in notation])
