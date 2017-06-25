@@ -6,9 +6,9 @@ root = tk.Tk()
 root.title("Tic Tac Toe")
 
 # Creating the board, 600 x 600 pixels, n squares across
-n = 3
-size = 600 // n
-squares = [(rank, file) for rank in range(1, n + 1) for file in range(1, n + 1)]
+m = Square.n
+size = 600 // m
+squares = [(rank, file) for rank in range(1, m + 1) for file in range(1, m + 1)]
 
 for (rank, file) in squares:
 	square = Square((rank, file), master=root, size=size)

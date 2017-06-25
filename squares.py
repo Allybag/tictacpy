@@ -4,11 +4,15 @@ import numpy as np
 class Square(tk.Canvas):
 	"""A Square is a canvas on which nought or cross can be played"""
 
+	# Number of squares
+	n = 4
+
 	# Cross starts
 	crossToPlay = True
+
 	# moveList and state are both representations of the board
 	moveList = []
-	state = np.zeros((3, 3))
+	state = np.zeros((n, n))
 
 	def __init__(self, name, master=None, size=None):
 		super().__init__(master, width=size, height=size)
@@ -34,7 +38,7 @@ class Square(tk.Canvas):
 		else:
 			self.create_oval(tl, tl, br, br)
 			self.symbol = 'O'
-			self.state[self.gr] = 4
+			self.state[self.gr] = Square.n + 1
 
 	def tic(self, event):
 		""""This draws the relevant move, marks the square as played,
@@ -71,8 +75,8 @@ class Square(tk.Canvas):
 		winNums.append(Square.state.trace())
 		winNums.append(np.flipud(Square.state).trace())
 		
-		if 3 in winNums:
+		if Square.n in winNums:
 			print("Victory for X!")
 
-		if 12 in winNums:
+		if (Square.n**2 + Square.n) in winNums:
 			print("Victory for O!")
