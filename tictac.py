@@ -1,13 +1,12 @@
 import tkinter as tk
 
-# notation is a list of moves played
-notation = []
 
 class Square(tk.Canvas):
 	"""A Square is a canvas on which nought or cross can be played"""
 
 	# Cross starts
 	crossToPlay = True
+	moveList = []
 
 	def __init__(self, name, master=None, size=None):
 		super().__init__(master, width=size, height=size)
@@ -38,10 +37,8 @@ class Square(tk.Canvas):
 		if not self.symbol:
 			self.draw()
 			Square.crossToPlay = not Square.crossToPlay
-			global notation
-			notation.append(self)
-			print([m.name for m in notation])
-			print(self.symbol)
+			self.moveList.append(self)
+			self.print()
 
 
 	def clear(self):
@@ -50,8 +47,15 @@ class Square(tk.Canvas):
 			self.delete("all")
 			self.symbol = None
 			Square.crossToPlay = not Square.crossToPlay
-			global notation
-			print([m.name for m in notation])
+			self.print()
+
+	@classmethod
+	def undo(cls):
+		cls.moveList.pop().clear()
+
+	@classmethod
+	def print(cls):
+		print('Moves:', *[square.name for square in cls.moveList])
 
 root = tk.Tk()
 root.title("Tic Tac Toe")
@@ -85,6 +89,6 @@ root.config(menu=menu)
 fileMenu = tk.Menu(menu)
 menu.add_cascade(label="File", menu=fileMenu)
 # Undo calls the clear function on the most recently played square.
-fileMenu.add_command(label="Undo", command=lambda: notation.pop().clear())
+fileMenu.add_command(label="Undo", command=lambda: Square.moveList.pop().clear())
 
 root.mainloop()
