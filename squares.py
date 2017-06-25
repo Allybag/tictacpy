@@ -7,8 +7,9 @@ class Square(tk.Canvas):
 	# Number of squares
 	n = 4
 
-	# Cross starts
+	# Cross starts, and the game has no result yet
 	crossToPlay = True
+	result = None
 
 	# moveList and state are both representations of the board
 	moveList = []
@@ -43,7 +44,7 @@ class Square(tk.Canvas):
 	def tic(self, event):
 		""""This draws the relevant move, marks the square as played,
 		sets the next symbol to play, and records the move order."""
-		if not self.symbol:
+		if not self.symbol and not self.result:
 			self.draw()
 			Square.crossToPlay = not Square.crossToPlay
 			self.moveList.append(self)
@@ -56,6 +57,7 @@ class Square(tk.Canvas):
 		if self.symbol:
 			self.delete("all")
 			self.symbol = None
+			Square.result = None
 			Square.crossToPlay = not Square.crossToPlay
 			self.print()
 			self.state[self.gr] = 0
@@ -70,13 +72,21 @@ class Square(tk.Canvas):
 
 	@staticmethod
 	def winCheck():
+		# Sums which correspond to a line across a column
 		winNums = list(Square.state.sum(axis=0))
+		# Sums which correspond to a line across a row
 		winNums.extend(list(Square.state.sum(axis=1)))
+		# Sums which correspond to a line across the main diagonal
 		winNums.append(Square.state.trace())
+		# Sums which correspond to a line across the off diagonal
 		winNums.append(np.flipud(Square.state).trace())
 		
 		if Square.n in winNums:
 			print("Victory for X!")
-
-		if (Square.n**2 + Square.n) in winNums:
+			Square.result = 1
+		elif (Square.n**2 + Square.n) in winNums:
 			print("Victory for O!")
+			Square.result = -1
+		elif np.count_nonzero(Square.state) == Square.n**2:
+			print("It's a draw!")
+			Square.result = 0

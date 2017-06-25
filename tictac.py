@@ -25,5 +25,6 @@ menu.add_cascade(label="File", menu=fileMenu)
 # Undo calls the clear function on the most recently played square.
 fileMenu.add_command(label="Undo", command=lambda: Square.moveList.pop().clear())
 fileMenu.add_command(label="State", command=lambda: print(Square.state))
+fileMenu.add_command(label="Result", command=lambda: print(Square.result))
 
 root.mainloop()
