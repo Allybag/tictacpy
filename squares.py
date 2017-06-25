@@ -44,6 +44,7 @@ class Square(tk.Canvas):
 			Square.crossToPlay = not Square.crossToPlay
 			self.moveList.append(self)
 			self.print()
+			self.winCheck()
 
 
 	def clear(self):
@@ -62,3 +63,16 @@ class Square(tk.Canvas):
 	@classmethod
 	def print(cls):
 		print('Moves:', *[square.name for square in cls.moveList])
+
+	@staticmethod
+	def winCheck():
+		winNums = list(Square.state.sum(axis=0))
+		winNums.extend(list(Square.state.sum(axis=1)))
+		winNums.append(Square.state.trace())
+		winNums.append(np.flipud(Square.state).trace())
+		
+		if 3 in winNums:
+			print("Victory for X!")
+
+		if 12 in winNums:
+			print("Victory for O!")
