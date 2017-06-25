@@ -1,10 +1,14 @@
 import tkinter as tk
+import numpy as np
+
 class Square(tk.Canvas):
 	"""A Square is a canvas on which nought or cross can be played"""
 
 	# Cross starts
 	crossToPlay = True
+	# moveList and state are both representations of the board
 	moveList = []
+	state = np.zeros((3, 3))
 
 	def __init__(self, name, master=None, size=None):
 		super().__init__(master, width=size, height=size)
@@ -15,6 +19,7 @@ class Square(tk.Canvas):
 		self.name = name
 		self.topLeft = size * 0.15
 		self.bottomRight = size * 0.85
+		self.gr = tuple(np.subtract(self.name, (1,1)))
 
 	def draw(self):
 		"""This will draw a nought or cross on itself,
@@ -25,9 +30,11 @@ class Square(tk.Canvas):
 			self.create_line(tl, tl, br, br)
 			self.create_line(tl, br, br, tl)
 			self.symbol = 'X'
+			self.state[self.gr] = 1
 		else:
 			self.create_oval(tl, tl, br, br)
 			self.symbol = 'O'
+			self.state[self.gr] = 4
 
 	def tic(self, event):
 		""""This draws the relevant move, marks the square as played,
@@ -46,6 +53,7 @@ class Square(tk.Canvas):
 			self.symbol = None
 			Square.crossToPlay = not Square.crossToPlay
 			self.print()
+			self.state[self.gr] = 0
 
 	@classmethod
 	def undo(cls):

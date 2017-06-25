@@ -1,4 +1,5 @@
 import tkinter as tk
+import numpy as np
 from squares import Square
 
 root = tk.Tk()
@@ -15,7 +16,6 @@ for (rank, file) in squares:
 
 # Checking for a win
 
-
 # Creating File Menu
 menu = tk.Menu(root)
 root.config(menu=menu)
@@ -24,5 +24,6 @@ fileMenu = tk.Menu(menu)
 menu.add_cascade(label="File", menu=fileMenu)
 # Undo calls the clear function on the most recently played square.
 fileMenu.add_command(label="Undo", command=lambda: Square.moveList.pop().clear())
+fileMenu.add_command(label="State", command=lambda: print(Square.state))
 
 root.mainloop()
