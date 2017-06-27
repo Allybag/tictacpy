@@ -5,15 +5,14 @@ import gamecfg
 class Square(tk.Canvas):
 	"""A Square is a canvas on which nought or cross can be played"""
 
-	# Number of squares
-	m = gamecfg.n
-
-	# Cross starts, and the game has no result yet
+	# Cross starts, board of length m, and the game has no result yet
 	crossToPlay = True
 	result = None
+	m = gamecfg.n
 
-	# moveList and state are both representations of the board
+	# moveList, squareDict and state are all representations of the board
 	moveList = []
+	squareDict = {}
 	state = np.zeros((m, m))
 
 	def __init__(self, name, master=None, size=None):
@@ -21,11 +20,13 @@ class Square(tk.Canvas):
 		self.bind("<Button-1>", self.tic)
 		self.config(highlightbackground="Black")
 		self.config(highlightthickness=1)
+
 		self.symbol = None
 		self.name = name
 		self.topLeft = size * 0.15
 		self.bottomRight = size * 0.85
 		self.gr = tuple(np.subtract(self.name, (1,1)))
+		Square.squareDict[self.name] = self
 
 	def draw(self):
 		"""This will draw a nought or cross on itself,
