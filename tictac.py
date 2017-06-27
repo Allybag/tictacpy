@@ -1,12 +1,13 @@
 import tkinter as tk
 import numpy as np
+import gamecfg
 from squares import Square
 
 root = tk.Tk()
 root.title("Tic Tac Toe")
 
 # Creating the board, 600 x 600 pixels, n squares across
-m = Square.n
+m = gamecfg.n
 size = 600 // m
 squares = [(rank, file) for rank in range(1, m + 1) for file in range(1, m + 1)]
 

@@ -1,11 +1,12 @@
 import tkinter as tk
 import numpy as np
+import gamecfg
 
 class Square(tk.Canvas):
 	"""A Square is a canvas on which nought or cross can be played"""
 
 	# Number of squares
-	n = 4
+	m = gamecfg.n
 
 	# Cross starts, and the game has no result yet
 	crossToPlay = True
@@ -13,7 +14,7 @@ class Square(tk.Canvas):
 
 	# moveList and state are both representations of the board
 	moveList = []
-	state = np.zeros((n, n))
+	state = np.zeros((m, m))
 
 	def __init__(self, name, master=None, size=None):
 		super().__init__(master, width=size, height=size)
@@ -35,11 +36,11 @@ class Square(tk.Canvas):
 			self.create_line(tl, tl, br, br)
 			self.create_line(tl, br, br, tl)
 			self.symbol = 'X'
-			self.state[self.gr] = 1
+			Square.state[self.gr] = 1
 		else:
 			self.create_oval(tl, tl, br, br)
 			self.symbol = 'O'
-			self.state[self.gr] = Square.n + 1
+			Square.state[self.gr] = Square.m + 1
 
 	def tic(self, event):
 		""""This draws the relevant move, marks the square as played,
@@ -47,9 +48,9 @@ class Square(tk.Canvas):
 		if not self.symbol and not self.result:
 			self.draw()
 			Square.crossToPlay = not Square.crossToPlay
-			self.moveList.append(self)
-			self.print()
-			self.winCheck()
+			Square.moveList.append(self)
+			Square.print()
+			Square.winCheck()
 
 
 	def clear(self):
@@ -59,8 +60,8 @@ class Square(tk.Canvas):
 			self.symbol = None
 			Square.result = None
 			Square.crossToPlay = not Square.crossToPlay
-			self.print()
-			self.state[self.gr] = 0
+			Square.print()
+			Square.state[self.gr] = 0
 
 	@classmethod
 	def undo(cls):
@@ -81,12 +82,12 @@ class Square(tk.Canvas):
 		# Sums which correspond to a line across the off diagonal
 		winNums.append(np.flipud(Square.state).trace())
 		
-		if Square.n in winNums:
+		if Square.m in winNums:
 			print("Victory for X!")
 			Square.result = 1
-		elif (Square.n**2 + Square.n) in winNums:
+		elif (Square.m**2 + Square.m) in winNums:
 			print("Victory for O!")
 			Square.result = -1
-		elif np.count_nonzero(Square.state) == Square.n**2:
+		elif np.count_nonzero(Square.state) == Square.m**2:
 			print("It's a draw!")
 			Square.result = 0
