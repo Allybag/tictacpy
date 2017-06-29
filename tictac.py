@@ -7,7 +7,7 @@ root = tk.Tk()
 root.title("Tic Tac Toe")
 
 # The engine is noughts
-engineIsCross = 'No Engine'
+engineIsCross = True
 
 
 # The main class
@@ -139,12 +139,16 @@ fileMenu.add_command(label="Restart", command=lambda: clearAll())
 def computerMove():
 	# Decide whether or not the computer is to play
 	if engineIsCross == Square.crossToPlay and not Square.result:
-		# Look for a random move, and play it if legal
-		while True:
-			k = Square.squareDict[random.choice(list(Square.squareDict.keys()))]
-			if k not in Square.moveList:
-				k.tac()
-				break
+		# Use Square.state to determine the legal moves
+		gameState = Square.state.copy()
+		moveChoices = []
+		it = np.nditer(gameState, flags=['multi_index'])
+		while not it.finished:
+			if it[0] == 0:
+				moveChoices.append(tuple(np.add(it.multi_index, (1, 1))))
+			it.iternext()
+		print(moveChoices)
+		Square.squareDict[random.choice(moveChoices)].tac()
 
 computerMove()
 root.mainloop()
