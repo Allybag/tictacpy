@@ -15,7 +15,9 @@ for (rank, file) in squares:
 	square = Square((rank, file), master=root, size=size)
 	square.grid(row=rank, column=file)
 
-# Checking for a win
+def clearAll():
+	while Square.moveList:
+		Square.moveList.pop().clear()
 
 # Creating File Menu
 menu = tk.Menu(root)
@@ -27,6 +29,8 @@ menu.add_cascade(label="File", menu=fileMenu)
 fileMenu.add_command(label="Undo", command=lambda: Square.moveList.pop().clear())
 fileMenu.add_command(label="State", command=lambda: print(Square.state))
 fileMenu.add_command(label="Result", command=lambda: print(Square.result))
+fileMenu.add_command(label="Restart", command=lambda: clearAll())
+
 
 
 root.mainloop()
