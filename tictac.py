@@ -50,7 +50,7 @@ class Square(tk.Canvas):
 			Square.crossToPlay = not Square.crossToPlay
 			Square.moveList.append(self)
 			Square.print()
-			Square.winCheck()
+			winCheck(Square.state)
 			computerMove()
 
 	def tic(self, event):
@@ -81,27 +81,6 @@ class Square(tk.Canvas):
 	def print(cls):
 		print('Moves:', *[square.name for square in cls.moveList])
 
-	@staticmethod
-	def winCheck():
-		# Sums which correspond to a line across a column
-		winNums = list(Square.state.sum(axis=0))
-		# Sums which correspond to a line across a row
-		winNums.extend(list(Square.state.sum(axis=1)))
-		# Sums which correspond to a line across the main diagonal
-		winNums.append(Square.state.trace())
-		# Sums which correspond to a line across the off diagonal
-		winNums.append(np.flipud(Square.state).trace())
-		
-		if Square.m in winNums:
-			print("Victory for X!")
-			Square.result = 'X'
-		elif (Square.m**2 + Square.m) in winNums:
-			print("Victory for O!")
-			Square.result = 'O'
-		elif np.count_nonzero(Square.state) == Square.m**2:
-			print("It's a draw!")
-			Square.result = 'D'
-
 
 # Creating the board, 600 x 600 pixels, n squares across
 m = gamecfg.n
@@ -129,6 +108,28 @@ fileMenu.add_command(label="Undo", command=lambda: Square.moveList.pop().clear()
 fileMenu.add_command(label="State", command=lambda: print(Square.state))
 fileMenu.add_command(label="Result", command=lambda: print(Square.result))
 fileMenu.add_command(label="Restart", command=lambda: clearAll())
+
+def winCheck(state):
+	# Sums which correspond to a line across a column
+	winNums = list(state.sum(axis=0))
+	# Sums which correspond to a line across a row
+	winNums.extend(list(state.sum(axis=1)))
+	# Sums which correspond to a line across the main diagonal
+	winNums.append(state.trace())
+	# Sums which correspond to a line across the off diagonal
+	winNums.append(np.flipud(state).trace())
+
+	# Bit dodgy, only set the result if state given matches the true state
+	if np.array_equal(state, Square.state):
+		if Square.m in winNums:
+			print("Victory for X!")
+			Square.result = 'X'
+		elif (Square.m**2 + Square.m) in winNums:
+			print("Victory for O!")
+			Square.result = 'O'
+		elif np.count_nonzero(state) == Square.m**2:
+			print("It's a draw!")
+			Square.result = 'D'
 
 # This function is called safely anytime it might be the computer's turn
 def computerMove():
