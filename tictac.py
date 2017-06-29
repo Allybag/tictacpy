@@ -6,10 +6,6 @@ import gamecfg
 root = tk.Tk()
 root.title("Tic Tac Toe")
 
-# The engine is noughts
-engineIsCross = True
-
-
 # The main class
 class Square(tk.Canvas):
 	"""A Square is a canvas on which nought or cross can be played"""
@@ -138,7 +134,7 @@ fileMenu.add_command(label="Restart", command=lambda: clearAll())
 # This function is called safely anytime it might be the computer's turn
 def computerMove():
 	# Decide whether or not the computer is to play
-	if engineIsCross == Square.crossToPlay and not Square.result:
+	if gamecfg.engineIsCross == Square.crossToPlay and not Square.result:
 		# Use Square.state to determine the legal moves
 		gameState = Square.state.copy()
 		moveChoices = []
