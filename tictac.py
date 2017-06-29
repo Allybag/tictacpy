@@ -1,9 +1,14 @@
 import tkinter as tk
+import random
 import numpy as np
 import gamecfg
 
 root = tk.Tk()
 root.title("Tic Tac Toe")
+
+# The engine is noughts
+engineIsCross = 'No Engine'
+
 
 # The main class
 class Square(tk.Canvas):
@@ -35,27 +40,32 @@ class Square(tk.Canvas):
 	def draw(self):
 		"""This will draw a nought or cross on itself,
 		depending on who is to play."""
-		tl = self.topLeft
-		br = self.bottomRight
-		if Square.crossToPlay:
-			self.create_line(tl, tl, br, br)
-			self.create_line(tl, br, br, tl)
-			self.symbol = 'X'
-			Square.state[self.gr] = 1
-		else:
-			self.create_oval(tl, tl, br, br)
-			self.symbol = 'O'
-			Square.state[self.gr] = Square.m + 1
-
-	def tic(self, event):
-		""""This draws the relevant move, marks the square as played,
-		sets the next symbol to play, and records the move order."""
 		if not self.symbol and not self.result:
-			self.draw()
+			tl = self.topLeft
+			br = self.bottomRight
+			if Square.crossToPlay:
+				self.create_line(tl, tl, br, br)
+				self.create_line(tl, br, br, tl)
+				self.symbol = 'X'
+				Square.state[self.gr] = 1
+			else:
+				self.create_oval(tl, tl, br, br)
+				self.symbol = 'O'
+				Square.state[self.gr] = Square.m + 1
 			Square.crossToPlay = not Square.crossToPlay
 			Square.moveList.append(self)
 			Square.print()
 			Square.winCheck()
+			computerMove()
+
+	def tic(self, event):
+		""""A tic is a player clicking on a square"""
+		self.draw()
+
+	def tac(self):
+		"""A tac is the computer playing"""
+		self.draw()
+
 
 
 	def clear(self):
@@ -89,13 +99,13 @@ class Square(tk.Canvas):
 		
 		if Square.m in winNums:
 			print("Victory for X!")
-			Square.result = 1
+			Square.result = 'X'
 		elif (Square.m**2 + Square.m) in winNums:
 			print("Victory for O!")
-			Square.result = -1
+			Square.result = 'O'
 		elif np.count_nonzero(Square.state) == Square.m**2:
 			print("It's a draw!")
-			Square.result = 0
+			Square.result = 'D'
 
 
 # Creating the board, 600 x 600 pixels, n squares across
@@ -107,9 +117,11 @@ for (rank, file) in squares:
 	square = Square((rank, file), master=root, size=size)
 	square.grid(row=rank, column=file)
 
+
 def clearAll():
 	while Square.moveList:
 		Square.moveList.pop().clear()
+	computerMove()
 
 # Creating File Menu
 menu = tk.Menu(root)
@@ -123,6 +135,16 @@ fileMenu.add_command(label="State", command=lambda: print(Square.state))
 fileMenu.add_command(label="Result", command=lambda: print(Square.result))
 fileMenu.add_command(label="Restart", command=lambda: clearAll())
 
+# This function is called safely anytime it might be the computer's turn
+def computerMove():
+	# Decide whether or not the computer is to play
+	if engineIsCross == Square.crossToPlay and not Square.result:
+		# Look for a random move, and play it if legal
+		while True:
+			k = Square.squareDict[random.choice(list(Square.squareDict.keys()))]
+			if k not in Square.moveList:
+				k.tac()
+				break
 
-
+computerMove()
 root.mainloop()
