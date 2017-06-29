@@ -30,7 +30,6 @@ class Square(tk.Canvas):
 		self.name = name
 		self.topLeft = size * 0.15
 		self.bottomRight = size * 0.85
-		self.gr = tuple(np.subtract(self.name, (1,1)))
 		Square.squareDict[self.name] = self
 
 	def draw(self):
@@ -43,11 +42,11 @@ class Square(tk.Canvas):
 				self.create_line(tl, tl, br, br)
 				self.create_line(tl, br, br, tl)
 				self.symbol = 'X'
-				Square.state[self.gr] = 1
+				Square.state[self.name] = 1
 			else:
 				self.create_oval(tl, tl, br, br)
 				self.symbol = 'O'
-				Square.state[self.gr] = Square.m + 1
+				Square.state[self.name] = Square.m + 1
 			Square.crossToPlay = not Square.crossToPlay
 			Square.moveList.append(self)
 			Square.print()
@@ -72,7 +71,7 @@ class Square(tk.Canvas):
 			Square.result = None
 			Square.crossToPlay = not Square.crossToPlay
 			Square.print()
-			Square.state[self.gr] = 0
+			Square.state[self.name] = 0
 
 	@classmethod
 	def undo(cls):
@@ -107,7 +106,7 @@ class Square(tk.Canvas):
 # Creating the board, 600 x 600 pixels, n squares across
 m = gamecfg.n
 size = 600 // m
-squares = [(rank, file) for rank in range(1, m + 1) for file in range(1, m + 1)]
+squares = [(rank, file) for rank in range(m) for file in range(m)]
 
 for (rank, file) in squares:
 	square = Square((rank, file), master=root, size=size)
@@ -141,7 +140,7 @@ def computerMove():
 		it = np.nditer(gameState, flags=['multi_index'])
 		while not it.finished:
 			if it[0] == 0:
-				moveChoices.append(tuple(np.add(it.multi_index, (1, 1))))
+				moveChoices.append(it.multi_index)
 			it.iternext()
 		print(moveChoices)
 		Square.squareDict[random.choice(moveChoices)].tac()
