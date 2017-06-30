@@ -146,21 +146,25 @@ def computerMove():
 		# Use Square.state to determine the legal moves
 		gameState = Square.state.copy()
 		moveChoices = []
+		moveValues = {}
+
 		it = np.nditer(gameState, flags=['multi_index'])
 		while not it.finished:
 			if it[0] == 0:
 				moveChoices.append(it.multi_index)
 			it.iternext()
 
+
 		if gamecfg.engineLevel >= 2:
 			for move in moveChoices:
+				moveValues[move] = 0
 				moveState = gameState.copy()
 				moveState[move] = e
 				#print("I am considering {}".format(move))
 				if winCheck(moveState) == victory:
 					print("I will play {} to win!".format(move))
-					Square.squareDict[move].tac()
-					return
+					moveValues[move] = 100
+					break
 				if gamecfg.engineLevel >= 3:
 					movesLeft = moveChoices[:]
 					movesLeft.remove(move)
@@ -169,13 +173,16 @@ def computerMove():
 						nextState[next] = o
 						if winCheck(nextState) == loss:
 							print("I will play {} to not lose!".format(next))
-							Square.squareDict[next].tac()
-							return
-						else:
-							#print("I won't worry about {}".format(next))
-							pass
+							moveValues[next] = 10
+							break
+			#print(max(moveValues.keys(), key=(lambda k: moveValues[k])))
+			print(moveValues)
 
-		Square.squareDict[random.choice(moveChoices)].tac()
+			Square.squareDict[max(moveValues.keys(), key=(lambda k: moveValues[k]))].tac()
+
+		else:
+			# We're on level one, so we just play a random move
+			Square.squareDict[random.choice(moveChoices)].tac()
 
 
 computerMove()
