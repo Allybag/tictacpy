@@ -124,20 +124,25 @@ def winCheck(state):
 	# Sums which correspond to a line across the off diagonal
 	winNums.append(np.flipud(state).trace())
 
-	if np.array_equal(state, Square.state):
-		if Square.m in winNums:
-			return 'X'
-		elif (Square.m**2 + Square.m) in winNums:
-			return 'O'
-		elif np.count_nonzero(state) == Square.m**2:
-			return 'D'
-		else:
-			return None
+	if Square.m in winNums:
+		return 'X'
+	elif (Square.m**2 + Square.m) in winNums:
+		return 'O'
+	elif np.count_nonzero(state) == Square.m**2:
+		return 'D'
+	else:
+		return None
 
 # This function is called safely anytime it might be the computer's turn
 def computerMove():
 	# Decide whether or not the computer is to play
 	if gamecfg.engineIsCross == Square.crossToPlay and not Square.result:
+		# Set the value of engine and opponent's pieces in state
+		if gamecfg.engineIsCross:
+			e = 1; o = gamecfg.n + 1
+		else:
+			e = gamecfg.n + 1; o = 1
+
 		# Use Square.state to determine the legal moves
 		gameState = Square.state.copy()
 		moveChoices = []
@@ -146,8 +151,20 @@ def computerMove():
 			if it[0] == 0:
 				moveChoices.append(it.multi_index)
 			it.iternext()
-		print(moveChoices)
-		Square.squareDict[random.choice(moveChoices)].tac()
+
+		if gamecfg.engineLevel == 1:
+			Square.squareDict[random.choice(moveChoices)].tac()
+
+		if gamecfg.engineLevel == 2:
+			for move in moveChoices:
+				moveState = gameState.copy()
+				moveState[move] = e
+				if winCheck(moveState):
+					print("I will play {} to win!".format(move))
+					Square.squareDict[move].tac()
+					return
+			Square.squareDict[random.choice(moveChoices)].tac()
+
 
 computerMove()
 root.mainloop()
