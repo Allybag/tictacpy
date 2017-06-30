@@ -2,6 +2,7 @@ import tkinter as tk
 import random
 import numpy as np
 import gamecfg
+import time
 
 root = tk.Tk()
 root.title("Tic Tac Toe")
@@ -52,15 +53,16 @@ class Square(tk.Canvas):
 			Square.moveList.append(self)
 			Square.print()
 			Square.setResult(winCheck(Square.state))
-			# The computer will only play if it should
-			computerMove()
 
 	def tic(self, event):
 		""""A tic is a player clicking on a square"""
 		self.draw()
+		computerMove()
 
 	def tac(self):
 		"""A tac is the computer playing"""
+		root.update()
+		time.sleep(gamecfg.engineWait)
 		self.draw()
 
 
@@ -150,7 +152,7 @@ def computerMove():
 		# Use Square.state to determine the legal moves
 		gameState = Square.state.copy()
 		moveChoices = []
-		moveValues = {}
+		moveScores = {}
 
 		# Iterate over state, to determine which squares are empty
 		it = np.nditer(gameState, flags=['multi_index'])
@@ -161,7 +163,7 @@ def computerMove():
 
 		for move in moveChoices:
 			# Before evaluation, all squares are equal
-			moveValues[move] = 0
+			moveScores[move] = 0
 
 		if gamecfg.engineLevel >= 2:
 			for move in moveChoices:
@@ -171,7 +173,7 @@ def computerMove():
 				if winCheck(moveState) == victory:
 					# Winning is always the best possible move
 					print("I will play {} to win!".format(move))
-					moveValues[move] = 100
+					moveScores[move] = 100
 					break
 				if gamecfg.engineLevel >= 3:
 					movesLeft = moveChoices[:]
@@ -182,12 +184,14 @@ def computerMove():
 						if winCheck(nextState) == loss:
 							# The only thing preferable to blocking a loss is winning
 							print("I will play {} to not lose!".format(next))
-							moveValues[next] = 10
+							moveScores[next] = 10
 							break
 
-		# Choose the move with the highest value, or pick the first if all tied
-		Square.squareDict[max(moveValues.keys(), key=(lambda k: moveValues[k]))].tac()
-
+		# Choose the highest value, or a random move if all are tied
+		if all(moveScore == 0 for moveScore in moveScores.values()):
+			Square.squareDict[random.choice(moveChoices)].tac()
+		else:
+			Square.squareDict[max(moveScores.keys(), key=(lambda k: moveScores[k]))].tac()
 
 
 computerMove()
