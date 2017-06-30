@@ -3,4 +3,4 @@ n = 3
 
 # Engine player: True - X, False - O, None - No Engine
 engineIsCross = True
-engineLevel = 2
+engineLevel = 3

@@ -139,9 +139,9 @@ def computerMove():
 	if gamecfg.engineIsCross == Square.crossToPlay and not Square.result:
 		# Set the value of engine and opponent's pieces in state
 		if gamecfg.engineIsCross:
-			e = 1; o = gamecfg.n + 1
+			e = 1; o = gamecfg.n + 1; victory = 'X'; loss = 'O'
 		else:
-			e = gamecfg.n + 1; o = 1
+			e = gamecfg.n + 1; o = 1; victory = 'O'; loss = 'X'
 
 		# Use Square.state to determine the legal moves
 		gameState = Square.state.copy()
@@ -152,18 +152,30 @@ def computerMove():
 				moveChoices.append(it.multi_index)
 			it.iternext()
 
-		if gamecfg.engineLevel == 1:
-			Square.squareDict[random.choice(moveChoices)].tac()
-
-		if gamecfg.engineLevel == 2:
+		if gamecfg.engineLevel >= 2:
 			for move in moveChoices:
 				moveState = gameState.copy()
 				moveState[move] = e
-				if winCheck(moveState):
+				#print("I am considering {}".format(move))
+				if winCheck(moveState) == victory:
 					print("I will play {} to win!".format(move))
 					Square.squareDict[move].tac()
 					return
-			Square.squareDict[random.choice(moveChoices)].tac()
+				if gamecfg.engineLevel >= 3:
+					movesLeft = moveChoices[:]
+					movesLeft.remove(move)
+					for next in movesLeft:
+						nextState = moveState.copy()
+						nextState[next] = o
+						if winCheck(nextState) == loss:
+							print("I will play {} to not lose!".format(next))
+							Square.squareDict[next].tac()
+							return
+						else:
+							#print("I won't worry about {}".format(next))
+							pass
+
+		Square.squareDict[random.choice(moveChoices)].tac()
 
 
 computerMove()
