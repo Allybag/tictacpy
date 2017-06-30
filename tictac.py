@@ -50,7 +50,7 @@ class Square(tk.Canvas):
 			Square.crossToPlay = not Square.crossToPlay
 			Square.moveList.append(self)
 			Square.print()
-			winCheck(Square.state)
+			Square.setResult(winCheck(Square.state))
 			computerMove()
 
 	def tic(self, event):
@@ -81,6 +81,11 @@ class Square(tk.Canvas):
 	def print(cls):
 		print('Moves:', *[square.name for square in cls.moveList])
 
+	@classmethod
+	def setResult(cls, result):
+		if result:
+			cls.result = result	
+			print("Result: {}".format(result))
 
 # Creating the board, 600 x 600 pixels, n squares across
 m = gamecfg.n
@@ -119,17 +124,15 @@ def winCheck(state):
 	# Sums which correspond to a line across the off diagonal
 	winNums.append(np.flipud(state).trace())
 
-	# Bit dodgy, only set the result if state given matches the true state
 	if np.array_equal(state, Square.state):
 		if Square.m in winNums:
-			print("Victory for X!")
-			Square.result = 'X'
+			return 'X'
 		elif (Square.m**2 + Square.m) in winNums:
-			print("Victory for O!")
-			Square.result = 'O'
+			return 'O'
 		elif np.count_nonzero(state) == Square.m**2:
-			print("It's a draw!")
-			Square.result = 'D'
+			return 'D'
+		else:
+			return None
 
 # This function is called safely anytime it might be the computer's turn
 def computerMove():
