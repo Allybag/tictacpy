@@ -2,7 +2,6 @@ import tkinter as tk
 import random
 import numpy as np
 import gamecfg
-import time
 
 root = tk.Tk()
 root.title("Tic Tac Toe")
@@ -62,8 +61,7 @@ class Square(tk.Canvas):
 	def tac(self):
 		"""A tac is the computer playing"""
 		root.update()
-		time.sleep(gamecfg.engineWait)
-		self.draw()
+		self.after(gamecfg.engineWait, self.draw())
 
 
 
