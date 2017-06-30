@@ -154,10 +154,11 @@ def computerMove():
 				moveChoices.append(it.multi_index)
 			it.iternext()
 
+		for move in moveChoices:
+			moveValues[move] = 0
 
 		if gamecfg.engineLevel >= 2:
 			for move in moveChoices:
-				moveValues[move] = 0
 				moveState = gameState.copy()
 				moveState[move] = e
 				#print("I am considering {}".format(move))
@@ -178,11 +179,8 @@ def computerMove():
 			#print(max(moveValues.keys(), key=(lambda k: moveValues[k])))
 			print(moveValues)
 
-			Square.squareDict[max(moveValues.keys(), key=(lambda k: moveValues[k]))].tac()
+		Square.squareDict[max(moveValues.keys(), key=(lambda k: moveValues[k]))].tac()
 
-		else:
-			# We're on level one, so we just play a random move
-			Square.squareDict[random.choice(moveChoices)].tac()
 
 
 computerMove()
