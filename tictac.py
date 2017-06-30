@@ -3,8 +3,6 @@ import random
 import numpy as np
 import gamecfg
 
-root = tk.Tk()
-root.title("Tic Tac Toe")
 
 # The main class
 class Square(tk.Canvas):
@@ -60,7 +58,7 @@ class Square(tk.Canvas):
 
 	def tac(self):
 		"""A tac is the computer playing"""
-		root.update()
+		self.master.update()
 		self.after(gamecfg.engineWait, self.draw())
 
 
@@ -89,32 +87,6 @@ class Square(tk.Canvas):
 			cls.result = result	
 			print("Result: {}".format(result))
 
-# Creating the board, 600 x 600 pixels, n squares across
-m = gamecfg.n
-size = 600 // m
-squares = [(rank, file) for rank in range(m) for file in range(m)]
-
-for (rank, file) in squares:
-	square = Square((rank, file), master=root, size=size)
-	square.grid(row=rank, column=file)
-
-
-def clearAll():
-	while Square.moveList:
-		Square.moveList.pop().clear()
-	computerMove()
-
-# Creating File Menu
-menu = tk.Menu(root)
-root.config(menu=menu)
-
-fileMenu = tk.Menu(menu)
-menu.add_cascade(label="File", menu=fileMenu)
-# Undo calls the clear function on the most recently played square.
-fileMenu.add_command(label="Undo", command=lambda: Square.moveList.pop().clear())
-fileMenu.add_command(label="State", command=lambda: print(Square.state))
-fileMenu.add_command(label="Result", command=lambda: print(Square.result))
-fileMenu.add_command(label="Restart", command=lambda: clearAll())
 
 def winCheck(state):
 	"""Takes a position, and returns the outcome of that game"""
@@ -191,6 +163,37 @@ def computerMove():
 		else:
 			Square.squareDict[max(moveScores.keys(), key=(lambda k: moveScores[k]))].tac()
 
+def clearAll():
+	while Square.moveList:
+		Square.moveList.pop().clear()
+	computerMove()
 
-computerMove()
-root.mainloop()
+def main():
+	root = tk.Tk()
+	root.title("Tic Tac Toe")
+
+	# Creating the board, 600 x 600 pixels, n squares across
+	m = gamecfg.n
+	size = 600 // m
+	squares = [(rank, file) for rank in range(m) for file in range(m)]
+
+	for (rank, file) in squares:
+		square = Square((rank, file), master=root, size=size)
+		square.grid(row=rank, column=file)
+
+	# Creating File Menu
+	menu = tk.Menu(root)
+	root.config(menu=menu)
+
+	fileMenu = tk.Menu(menu)
+	menu.add_cascade(label="File", menu=fileMenu)
+	# Undo calls the clear function on the most recently played square.
+	fileMenu.add_command(label="Undo", command=lambda: Square.moveList.pop().clear())
+	fileMenu.add_command(label="State", command=lambda: print(Square.state))
+	fileMenu.add_command(label="Result", command=lambda: print(Square.result))
+	fileMenu.add_command(label="Restart", command=lambda: clearAll())
+	computerMove()
+	root.mainloop()
+
+if __name__ == '__main__':
+	main()
