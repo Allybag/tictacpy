@@ -30,6 +30,7 @@ class Square(tk.Canvas):
 		self.name = name
 		self.topLeft = size * 0.15
 		self.bottomRight = size * 0.85
+		# Add itself to the dict of squares
 		Square.squareDict[self.name] = self
 
 	def draw(self):
@@ -51,6 +52,7 @@ class Square(tk.Canvas):
 			Square.moveList.append(self)
 			Square.print()
 			Square.setResult(winCheck(Square.state))
+			# The computer will only play if it should
 			computerMove()
 
 	def tic(self, event):
@@ -115,6 +117,7 @@ fileMenu.add_command(label="Result", command=lambda: print(Square.result))
 fileMenu.add_command(label="Restart", command=lambda: clearAll())
 
 def winCheck(state):
+	"""Takes a position, and returns the outcome of that game"""
 	# Sums which correspond to a line across a column
 	winNums = list(state.sum(axis=0))
 	# Sums which correspond to a line across a row
@@ -137,6 +140,7 @@ def winCheck(state):
 def computerMove():
 	# Decide whether or not the computer is to play
 	if gamecfg.engineIsCross == Square.crossToPlay and not Square.result:
+
 		# Set the value of engine and opponent's pieces in state
 		if gamecfg.engineIsCross:
 			e = 1; o = gamecfg.n + 1; victory = 'X'; loss = 'O'
@@ -148,6 +152,7 @@ def computerMove():
 		moveChoices = []
 		moveValues = {}
 
+		# Iterate over state, to determine which squares are empty
 		it = np.nditer(gameState, flags=['multi_index'])
 		while not it.finished:
 			if it[0] == 0:
@@ -155,6 +160,7 @@ def computerMove():
 			it.iternext()
 
 		for move in moveChoices:
+			# Before evaluation, all squares are equal
 			moveValues[move] = 0
 
 		if gamecfg.engineLevel >= 2:
@@ -163,6 +169,7 @@ def computerMove():
 				moveState[move] = e
 				#print("I am considering {}".format(move))
 				if winCheck(moveState) == victory:
+					# Winning is always the best possible move
 					print("I will play {} to win!".format(move))
 					moveValues[move] = 100
 					break
@@ -173,12 +180,12 @@ def computerMove():
 						nextState = moveState.copy()
 						nextState[next] = o
 						if winCheck(nextState) == loss:
+							# The only thing preferable to blocking a loss is winning
 							print("I will play {} to not lose!".format(next))
 							moveValues[next] = 10
 							break
-			#print(max(moveValues.keys(), key=(lambda k: moveValues[k])))
-			print(moveValues)
 
+		# Choose the move with the highest value, or pick the first if all tied
 		Square.squareDict[max(moveValues.keys(), key=(lambda k: moveValues[k]))].tac()
 
 
