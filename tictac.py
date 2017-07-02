@@ -108,60 +108,56 @@ def winCheck(state):
 	else:
 		return None
 
+def moveFind(state):
+	"""Takes a position as an nparray and determines the legal moves"""
+	moveChoices = []
+
+	# Iterate over state, to determine which squares are empty
+	it = np.nditer(state, flags=['multi_index'])
+	while not it.finished:
+		if it[0] == 0:
+			moveChoices.append(it.multi_index)
+		it.iternext()
+	return moveChoices
+
+def moveSim(state, move, player):
+	"""Create the state of the player having moved without interfering with the board"""
+	simState = state.copy()
+	if player == 1:
+		simState[move] = 1
+	else:
+		simState[move] = gamecfg.n + 1
+	return simState
+
+def positionScore(state):
+	"""The game is either won or lost"""
+	if winCheck(state) == 'X':
+		return 100
+	elif winCheck(state) == 'O':
+		return -100
+	else:
+		return 0
+
+def negaMax(state, depth, colour):
+	"""Recursively find the best move via a negamax search"""
+	if depth == 0:
+		return positionScore(state) * colour
+
+	highScore = -100
+
+	moveList = moveFind(state)
+	for move in moveList:
+		score = -negaMax(moveSim(state, move, colour), depth -1, colour * -1)
+		highScore = max(score, highScore)
+
+	return highScore
+
 # This function is called safely anytime it might be the computer's turn
 def computerMove():
 	# Decide whether or not the computer is to play
 	if gamecfg.engineIsCross == Square.crossToPlay and not Square.result:
 
-		# Set the value of engine and opponent's pieces in state
-		if gamecfg.engineIsCross:
-			e = 1; o = gamecfg.n + 1; victory = 'X'; loss = 'O'
-		else:
-			e = gamecfg.n + 1; o = 1; victory = 'O'; loss = 'X'
-
-		# Use Square.state to determine the legal moves
-		gameState = Square.state.copy()
-		moveChoices = []
-		moveScores = {}
-
-		# Iterate over state, to determine which squares are empty
-		it = np.nditer(gameState, flags=['multi_index'])
-		while not it.finished:
-			if it[0] == 0:
-				moveChoices.append(it.multi_index)
-			it.iternext()
-
-		for move in moveChoices:
-			# Before evaluation, all squares are equal
-			moveScores[move] = 0
-
-		if gamecfg.engineLevel >= 2:
-			for move in moveChoices:
-				moveState = gameState.copy()
-				moveState[move] = e
-				#print("I am considering {}".format(move))
-				if winCheck(moveState) == victory:
-					# Winning is always the best possible move
-					print("I will play {} to win!".format(move))
-					moveScores[move] = 100
-					break
-				if gamecfg.engineLevel >= 3:
-					movesLeft = moveChoices[:]
-					movesLeft.remove(move)
-					for next in movesLeft:
-						nextState = moveState.copy()
-						nextState[next] = o
-						if winCheck(nextState) == loss:
-							# The only thing preferable to blocking a loss is winning
-							print("I will play {} to not lose!".format(next))
-							moveScores[next] = 10
-							break
-
-		# Choose the highest value, or a random move if all are tied
-		if all(moveScore == 0 for moveScore in moveScores.values()):
-			Square.squareDict[random.choice(moveChoices)].tac()
-		else:
-			Square.squareDict[max(moveScores.keys(), key=(lambda k: moveScores[k]))].tac()
+		pass
 
 def clearAll():
 	while Square.moveList:
