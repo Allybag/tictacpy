@@ -132,15 +132,16 @@ def moveSim(state, move, player):
 def positionScore(state):
 	"""The game is either won or lost"""
 	if winCheck(state) == 'X':
-		return 100
+		return 100 - np.count_nonzero(state)
 	elif winCheck(state) == 'O':
-		return -100
+		return -100 + np.count_nonzero(state)
 	else:
 		return 0
 
 def negaMax(state, depth, colour):
 	"""Recursively find the best move via a negamax search"""
-	if depth == 0:
+	depth = min(depth, np.count_nonzero(state==0))
+	if depth == 0 or positionScore(state) != 0:
 		return positionScore(state) * colour
 
 	highScore = -100
@@ -156,8 +157,16 @@ def negaMax(state, depth, colour):
 def computerMove():
 	# Decide whether or not the computer is to play
 	if gamecfg.engineIsCross == Square.crossToPlay and not Square.result:
+		if gamecfg.engineIsCross:
+			player = 1
+		else:
+			player = -1
+		moveScores = {}
+		for move in moveFind(Square.state):
+			moveScores[move] = negaMax(moveSim(Square.state, move, player), gamecfg.lvl, player * -1)
 
-		pass
+		Square.squareDict[min(moveScores.keys(), key=(lambda k: moveScores[k]))].tac()
+		print(moveScores)
 
 def clearAll():
 	while Square.moveList:
