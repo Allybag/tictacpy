@@ -54,14 +54,12 @@ class Square(tk.Canvas):
 	def tic(self, event):
 		""""A tic is a player clicking on a square"""
 		self.draw()
-		computerMove()
+		self.master.update()
+		self.after(gamecfg.engineWait, computerMove())
 
 	def tac(self):
 		"""A tac is the computer playing"""
-		self.master.update()
-		self.after(gamecfg.engineWait, self.draw())
-
-
+		self.draw()
 
 	def clear(self):
 		""""This will clear the selected Square."""
