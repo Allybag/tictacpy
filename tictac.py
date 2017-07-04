@@ -138,7 +138,7 @@ def positionScore(state):
 	else:
 		return 0
 
-def negaMax(state, depth, colour):
+def negaMax(state, depth, alpha, beta, colour):
 	"""Recursively find the best move via a negamax search"""
 	depth = min(depth, np.count_nonzero(state==0))
 	if depth == 0 or positionScore(state) != 0:
@@ -148,8 +148,11 @@ def negaMax(state, depth, colour):
 
 	moveList = moveFind(state)
 	for move in moveList:
-		score = -negaMax(moveSim(state, move, colour), depth -1, colour * -1)
+		score = -negaMax(moveSim(state, move, colour), depth -1, -beta, -alpha, -colour)
 		highScore = max(score, highScore)
+		alpha = max(alpha, highScore)
+		if alpha >= beta:
+			break
 
 	return highScore
 
@@ -163,7 +166,7 @@ def computerMove():
 			player = -1
 		moveScores = {}
 		for move in moveFind(Square.state):
-			moveScores[move] = negaMax(moveSim(Square.state, move, player), gamecfg.lvl, player * -1)
+			moveScores[move] = negaMax(moveSim(Square.state, move, player), gamecfg.lvl, -100, 100, player * -1)
 
 		Square.squareDict[min(moveScores.keys(), key=(lambda k: moveScores[k]))].tac()
 		print(moveScores)
