@@ -1,5 +1,5 @@
 import tkinter as tk
-import random
+import tkinter.messagebox as tkmbox
 import numpy as np
 import gamecfg
 
@@ -82,8 +82,11 @@ class Square(tk.Canvas):
 	@classmethod
 	def setResult(cls, result):
 		if result:
-			cls.result = result	
-			print("Result: {}".format(result))
+			cls.result = result
+			if result != 'D':
+				tkmbox.showinfo("The game has ended.", "The winner of the game was {}!".format(result))
+			else:
+				tkmbox.showinfo("The game has ended.", "The game was a draw!")
 
 
 def winCheck(state):
