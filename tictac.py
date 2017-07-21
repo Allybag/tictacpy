@@ -18,8 +18,8 @@ class Square(tk.Canvas):
 	squareDict = {}
 	state = np.zeros((m, m))
 
-	def __init__(self, name, master=None, size=None):
-		super().__init__(master, width=size, height=size)
+	def __init__(self, name, master=None, size=None, colour=None):
+		super().__init__(master, width=size, height=size, bg=colour)
 		self.bind("<Button-1>", self.tic)
 		self.config(highlightbackground="Black")
 		self.config(highlightthickness=1)
@@ -187,7 +187,12 @@ def main():
 	squares = [(rank, file) for rank in range(m) for file in range(m)]
 
 	for (rank, file) in squares:
-		square = Square((rank, file), master=root, size=size)
+		if ((rank + file) % 2):
+			colour = 'gainsboro'
+		else:
+			colour = 'papaya whip'
+
+		square = Square((rank, file), master=root, size=size, colour=colour)
 		square.grid(row=rank, column=file)
 
 	# Creating File Menu
