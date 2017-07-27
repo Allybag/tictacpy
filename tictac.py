@@ -31,6 +31,12 @@ class Square(tk.Canvas):
 		# Add itself to the dict of squares
 		Square.squareDict[self.name] = self
 
+	def __repr__(self):
+		if self.symbol:
+			return("{} Controlled Square at {}".format(self.symbol, self.name))
+		else:
+			return("Empty Square at {}".format(self.name))
+
 	def draw(self):
 		"""This will draw a nought or cross on itself,
 		depending on who is to play."""
